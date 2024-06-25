@@ -2,7 +2,7 @@
 
 [Android Roadmap](https://roadmap.sh/r/android-development-k9lx4)
 
-> Note: You need to follow the steps below for each phase:
+> Note: You need to follow the steps any implementation:
 > - Create a new branch
 > - Make a new pull request
 >
