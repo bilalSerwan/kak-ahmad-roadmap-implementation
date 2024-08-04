@@ -2,7 +2,7 @@ package com.fastlink.jetpack_compose_article_impl
 
 import androidx.annotation.DrawableRes
 
-data class Message( @DrawableRes val image:Int, val name: String, val message: String)
+data class Message( @DrawableRes val image:Int, val name: String, val message: String,val timeSpint:String = "1 min ago")
 
 
 //sample list of messages

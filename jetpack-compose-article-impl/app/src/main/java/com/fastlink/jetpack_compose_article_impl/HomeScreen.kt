@@ -1,8 +1,11 @@
 package com.fastlink.jetpack_compose_article_impl
 
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -31,58 +34,79 @@ import androidx.compose.ui.unit.dp
 
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier){
-    LazyColumn(modifier = modifier
-        .fillMaxSize()
-        .background(MaterialTheme.colorScheme.background)
-        .padding(horizontal = 10.dp,)) {
-       items(conversationSample){ message ->
-                MessageCard(message)
-            }
+fun HomeScreen(modifier: Modifier = Modifier) {
+    LazyColumn(
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+            .padding(horizontal = 10.dp)
+    ) {
+        items(conversationSample) { message ->
+            MessageCard(message)
+        }
     }
 }
 
 
 @Composable
-fun MessageCard(message: Message){
-    Row (modifier = Modifier
-        .padding(10.dp)){
-        Image(painter = painterResource(id =message.image),
+fun MessageCard(message: Message) {
+    var isExpanded by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    Row(
+        modifier = Modifier.padding(10.dp)
+    ) {
+        Image(
+            painter = painterResource(id = message.image),
             contentDescription = null,
-            modifier= Modifier
+            modifier = Modifier
                 .size(50.dp)
                 .clip(CircleShape)
                 .border(1.5.dp, MaterialTheme.colorScheme.primary, CircleShape),
             contentScale = ContentScale.FillBounds,
         )
-         var isExpanded by  rememberSaveable{
-             mutableStateOf(false)
-         }
+
         val surfaceColor by animateColorAsState(
-            if(isExpanded) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface, label = ""
+            if (isExpanded) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
+            label = ""
         )
-        Column(
-            modifier= Modifier
-                .padding(start = 10.dp)
-                .clickable { isExpanded = !isExpanded }){
-            Text(text = message.name,
+        Column(modifier = Modifier
+            .padding(start = 10.dp)
+            .clickable { isExpanded = !isExpanded }) {
+            Text(
+                text = message.name,
                 color = MaterialTheme.colorScheme.secondary,
-                style = MaterialTheme.typography.titleSmall)
+                style = MaterialTheme.typography.titleSmall
+            )
             Surface(
-                color = surfaceColor,
-                modifier = Modifier
-                    .animateContentSize()
-                    .padding(1.dp),
-                shape = MaterialTheme.shapes.medium,
-                shadowElevation = 1.dp
+                color = surfaceColor, modifier = Modifier
+                    .animateContentSize(
+                        animationSpec = spring(
+                            dampingRatio = Spring.DampingRatioLowBouncy,
+                            stiffness = Spring.StiffnessLow
+                        )
+                    )
+                    .padding(1.dp), shape = MaterialTheme.shapes.medium, shadowElevation = 1.dp
             ) {
                 Text(
                     text = message.message,
                     style = MaterialTheme.typography.bodySmall,
-                    maxLines = if(isExpanded) Int.MAX_VALUE else 1,
+                    maxLines = if (isExpanded) Int.MAX_VALUE else 1,
                     modifier = Modifier.padding(5.dp)
                 )
-            } }
+            }
+
+            AnimatedVisibility(visible = isExpanded) {
+                Text(
+                    text = message.timeSpint,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.surface,
+                    modifier = Modifier.padding(top = 5.dp)
+                )
+
+            }
+        }
     }
 }
 
